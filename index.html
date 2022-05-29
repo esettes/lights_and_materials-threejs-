@@ -42,12 +42,12 @@ function main() {
             const canvas = document.querySelector('#c'); 
             const renderer = new THREE.WebGLRenderer({ canvas }); 
 
-            const fov = 45; 
+            const fov = 75; 
             const aspect = window.innerWidth / window.innerHeight;// 2; // the canvas default
             const near = 0.1; 
             const far = 400; 
             const camera = new THREE.PerspectiveCamera(fov, aspect, near, far); 
-            camera.position.set(0, 10, 20); 
+            camera.position.set(0, 4, 25); 
             
             
             // controles para la camara y DOM para obtener eventos de entrada 
@@ -64,7 +64,7 @@ function main() {
             let geometry, groundMirror;
             
             { 
-                const planeSize = 400; 
+                /*const planeSize = 400; 
                 const texture = loader.load('src/img/checker.png'); 
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
@@ -81,10 +81,11 @@ function main() {
                 });
                 const mesh = new THREE.Mesh(planeGeo, planeMat);
                 mesh.rotation.x = Math.PI * -.5;
-                scene.add(mesh);
+                scene.add(mesh);*/
             } 
         
-        
+                // walls
+
             {
                 const wallSize = 70;
                 const wall = new THREE.PlaneGeometry(wallSize, 30);
@@ -98,11 +99,42 @@ function main() {
                 })
                 let wallMesh;
                 wallMesh = new THREE.Mesh(wall, wallMat);
-                wallMesh.position.set(wallSize/22, 30 /2, -25);
+                wallMesh.position.set(1.70, 30 /2, -25);
                 scene.add(wallMesh);
 
                 wallMesh = new THREE.Mesh(wall, wallMat);
-                wallMesh.rotation.x
+                wallMesh.position.set(wallSize /2, 30 /2, 10);
+                wallMesh.rotation.y = Math.PI * -.5;
+                scene.add(wallMesh);
+
+                wallMesh = new THREE.Mesh(wall, wallMat);
+                wallMesh.position.set(-wallSize /2.2, 30 /2, 10);
+                wallMesh.rotation.y = Math.PI * .5;
+                scene.add(wallMesh);
+
+
+                    // top and bottom
+
+                const topWallSize = 70;
+                const topWall = new THREE.PlaneGeometry(topWallSize, topWallSize);
+                const topWallText = loader.load( 'src/img/checker_dots.jpg' );
+                topWallText.wrapS = THREE.RepeatWrapping;
+                topWallText.wrapT = THREE.RepeatWrapping;
+                topWallText.magFilter = THREE.NearestFilter;
+                topWallText.repeat.set(topWallSize/6, topWallSize/6);
+                const topWallMat = new THREE.MeshBasicMaterial({ 
+                    map: topWallText,
+                })
+
+                wallMesh = new THREE.Mesh(topWall, topWallMat);
+                wallMesh.position.set(1.5, topWallSize/3, 10);
+                wallMesh.rotation.x = Math.PI * .5;
+                scene.add(wallMesh);
+
+                wallMesh = new THREE.Mesh(topWall, topWallMat);
+                wallMesh.position.set(1.5, 0, 10);
+                wallMesh.rotation.x = Math.PI * -.5;
+                scene.add(wallMesh);
             } 
 
 
@@ -116,7 +148,7 @@ function main() {
                     textureHeight: window.innerHeight * window.devicePixelRatio,
                     color: 0xFFFFFF
                 } );
-                groundMirror.position.y = 0.5;
+                groundMirror.position.y = 0.01;
                 groundMirror.rotateX( - Math.PI / 2 );
                 scene.add( groundMirror );
             }
@@ -151,7 +183,7 @@ function main() {
                 })
                 sphereMat.blending = THREE.AdditiveBlending;
                 const mesh = new THREE.Mesh( sphereGeo, sphereMat ); 
-                mesh.position.set(-sphereRadius - 1, sphereRadius + 0.5, 0); 
+                mesh.position.set(-sphereRadius - 1, sphereRadius, 0); 
                 scene.add( mesh );
             } 
                 
