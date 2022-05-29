@@ -94,8 +94,9 @@ function main() {
                 wallText.wrapT = THREE.RepeatWrapping;
                 wallText.magFilter = THREE.NearestFilter;
                 wallText.repeat.set(wallSize/6, 30/6);
-                const wallMat = new THREE.MeshBasicMaterial({ 
+                const wallMat = new THREE.MeshPhongMaterial({ 
                     map: wallText,
+                    side: THREE.DoubleSide,
                 })
                 let wallMesh;
                 wallMesh = new THREE.Mesh(wall, wallMat);
@@ -122,16 +123,24 @@ function main() {
                 topWallText.wrapT = THREE.RepeatWrapping;
                 topWallText.magFilter = THREE.NearestFilter;
                 topWallText.repeat.set(topWallSize/6, topWallSize/6);
-                const topWallMat = new THREE.MeshBasicMaterial({ 
+                const topWallMat = new THREE.MeshPhongMaterial({ 
                     map: topWallText,
+                    side: THREE.DoubleSide,
                 })
 
                 wallMesh = new THREE.Mesh(topWall, topWallMat);
                 wallMesh.position.set(1.5, topWallSize/3, 10);
                 wallMesh.rotation.x = Math.PI * .5;
+                //wallMesh.rotation.y = Math.PI * -1;
+                wallMesh.rotation.z = Math.PI * -0.5;
                 scene.add(wallMesh);
 
-                wallMesh = new THREE.Mesh(topWall, topWallMat);
+                const bottomWallMat = new THREE.MeshPhongMaterial({ 
+                    map: topWallText,
+                    side: THREE.DoubleSide,
+                })
+
+                wallMesh = new THREE.Mesh(topWall, bottomWallMat);
                 wallMesh.position.set(1.5, 0, 10);
                 wallMesh.rotation.x = Math.PI * -.5;
                 scene.add(wallMesh);
@@ -146,9 +155,9 @@ function main() {
                     clipBias: 0.003,
                     textureWidth: window.innerWidth * window.devicePixelRatio,
                     textureHeight: window.innerHeight * window.devicePixelRatio,
-                    color: 0xFFFFFF
+                    color: 0xffFFFF
                 } );
-                groundMirror.position.y = 0.01;
+                groundMirror.position.y = 0.08;
                 groundMirror.rotateX( - Math.PI / 2 );
                 scene.add( groundMirror );
             }
@@ -156,16 +165,21 @@ function main() {
               /*      OBJECTS     */ 
         
             {
-                const cubeSize = 4; 
-                const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize); 
-                const cubeText = loader.load( 'src/img/checker_num.jpg' ); 
+                const cubeSize = 7; 
+                const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize, 8, 8, 8); 
+                //const cubeText = loader.load( 'src/img/checker_num.jpg' ); 
 
-                const cubeMat = new THREE.MeshBasicMaterial({ 
-                    map: cubeText,
+                const cubeMat = new THREE.MeshPhongMaterial({ 
+                    //map: cubeText,
+                    color: 0x3f7b9d,
+                    shininess: 100,
+                    wireframe: true,
+                    combine: THREE.AddOperation,
+                   // envMaps: reflection,
                 })
-                cubeMat.blending = THREE.SubtractiveBlending;
+                //cubeMat.blending = THREE.SubtractiveBlending;
                 const mesh = new THREE.Mesh(cubeGeo, cubeMat); 
-                mesh.position.set(cubeSize + 1, cubeSize / 2, 0); 
+                mesh.position.set(cubeSize + 7, 3.55, 0); 
                 scene.add(mesh);
             } 
 
@@ -175,13 +189,19 @@ function main() {
                 const sphereRadius = 3; 
                 const sphereWidthDivisions = 32; 
                 const sphereHeightDivisions = 16; 
-                const sphereGeo = new THREE.SphereGeometry( sphereRadius, sphereWidthDivisions, sphereHeightDivisions ); 
+                const sphereGeo = new THREE.SphereGeometry( sphereRadius, sphereWidthDivisions, sphereHeightDivisions,); 
 
-                const sphereText = loader.load( 'src/img/checker_num.jpg' ); 
-                const sphereMat = new THREE.MeshBasicMaterial({ 
+                const sphereText = loader.load( 'src/img/uv_grid_opengl.jpg' ); 
+                const sphereMat = new THREE.MeshPhongMaterial({ 
                     map: sphereText,
+                    //color: 0x05DD05,
+                    flatShading: true,
+                    shininess: 100,
+                    //emissive: 0xc2ddc2,
+                    combine: THREE.AddOperation,
+                    
                 })
-                sphereMat.blending = THREE.AdditiveBlending;
+                //sphereMat.blending = THREE.AdditiveBlending;
                 const mesh = new THREE.Mesh( sphereGeo, sphereMat ); 
                 mesh.position.set(-sphereRadius - 1, sphereRadius, 0); 
                 scene.add( mesh );
@@ -229,8 +249,8 @@ function main() {
                 const torusMat = new THREE.MeshPhysicalMaterial( {
                     color: diffuseColor,
                     metalness: 0.5,
-                    roughness: 1,
-                    clearcoat: 1.0, // - alpha,
+                    roughness: 0,
+                    clearcoat: 0, // - alpha,
                     clearcoatRoughness: 0.0, // - beta,
                     reflectivity: 1.0, // - gamma,
                     envMap: torusText
@@ -276,16 +296,16 @@ function main() {
                     //HemisphereColor 
                 ColorGUIHelper 
                 const skyColor = 0xffffff;  
-                const groundColor = 0x000000; 
+                const groundColor = 0xffffff; 
                 const intensity = 0.4; 
                 const light = new THREE.HemisphereLight(skyColor, groundColor, intensity); 
                 scene.add(light); 
                 // DirectionalLight 
                 
                 const color = 0xFFFFFF; 
-                const intensityDir = 1; 
+                const intensityDir = 0.5; 
                 const lightDir = new THREE.DirectionalLight(color, intensityDir); 
-                lightDir.position.set(0, 10, 0); 
+                lightDir.position.set(0, 10, 20); 
                 lightDir.target.position.set(10.7, 2.1, -50); 
                 scene.add(lightDir); scene.add(lightDir.target); 
                 const directionalHelper = new THREE.DirectionalLightHelper(lightDir); 
