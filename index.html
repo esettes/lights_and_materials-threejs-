@@ -30,19 +30,19 @@
     
     <script  type="module">
         import * as THREE from 'three';
-import { OrbitControls } from './src/lib/OrbitControls.js';
-import { RGBELoader } from './src/lib/RGBELoader.js';
-import { TextGeometry } from './src/lib/TextGeometry.js';
-import { Reflector } from './src/lib/Reflector.js';
-import { GUI } from './src/lib/lil-gui.module.min.js';
+        import { OrbitControls } from './src/lib/OrbitControls.js';
+        import { RGBELoader } from './src/lib/RGBELoader.js';
+        import { TextGeometry } from './src/lib/TextGeometry.js';
+        import { Reflector } from './src/lib/Reflector.js';
+        import { GUI } from './src/lib/lil-gui.module.min.js';
 
 
 
-function main() {
+        function main() {
             const canvas = document.querySelector('#c'); 
             const renderer = new THREE.WebGLRenderer({ canvas }); 
 
-            const fov = 75; 
+            const fov = 70; 
             const aspect = window.innerWidth / window.innerHeight;// 2; // the canvas default
             const near = 0.1; 
             const far = 400; 
@@ -57,8 +57,12 @@ function main() {
             controls.target.set(0, 5, 0); 
             controls.update(); 
             
+            
             const scene = new THREE.Scene(); 
             scene.background = new THREE.Color('black'); 
+            {
+                
+            }
 
             let loader = new THREE.TextureLoader();
             let geometry, groundMirror;
@@ -87,8 +91,8 @@ function main() {
                 // walls
 
             {
-                const wallSize = 70;
-                const wall = new THREE.PlaneGeometry(wallSize, 30);
+                const wallSize = 50;
+                const wall = new THREE.PlaneGeometry(wallSize, 25);
                 const wallText = loader.load( 'src/img/checker_dots.jpg' );
                 wallText.wrapS = THREE.RepeatWrapping;
                 wallText.wrapT = THREE.RepeatWrapping;
@@ -96,27 +100,27 @@ function main() {
                 wallText.repeat.set(wallSize/6, 30/6);
                 const wallMat = new THREE.MeshPhongMaterial({ 
                     map: wallText,
-                    side: THREE.DoubleSide,
+                    //side: THREE.DoubleSide,
                 })
                 let wallMesh;
                 wallMesh = new THREE.Mesh(wall, wallMat);
-                wallMesh.position.set(1.70, 30 /2, -25);
-                scene.add(wallMesh);
+                wallMesh.position.set(0, wallSize/4, -wallSize/2);
+                    scene.add(wallMesh);
 
                 wallMesh = new THREE.Mesh(wall, wallMat);
-                wallMesh.position.set(wallSize /2, 30 /2, 10);
+                wallMesh.position.set(wallSize /2, wallSize/4, 0);
                 wallMesh.rotation.y = Math.PI * -.5;
-                scene.add(wallMesh);
+                    scene.add(wallMesh);
 
                 wallMesh = new THREE.Mesh(wall, wallMat);
-                wallMesh.position.set(-wallSize /2.2, 30 /2, 10);
+                wallMesh.position.set(-wallSize /2, wallSize/4, 0);
                 wallMesh.rotation.y = Math.PI * .5;
-                scene.add(wallMesh);
+                    scene.add(wallMesh);
 
 
                     // top and bottom
 
-                const topWallSize = 70;
+                const topWallSize = 50;
                 const topWall = new THREE.PlaneGeometry(topWallSize, topWallSize);
                 const topWallText = loader.load( 'src/img/checker_dots.jpg' );
                 topWallText.wrapS = THREE.RepeatWrapping;
@@ -125,23 +129,23 @@ function main() {
                 topWallText.repeat.set(topWallSize/6, topWallSize/6);
                 const topWallMat = new THREE.MeshPhongMaterial({ 
                     map: topWallText,
-                    side: THREE.DoubleSide,
+                   // side: THREE.DoubleSide,
                 })
 
                 wallMesh = new THREE.Mesh(topWall, topWallMat);
-                wallMesh.position.set(1.5, topWallSize/3, 10);
+                wallMesh.position.set(0, topWallSize/2, 0);
                 wallMesh.rotation.x = Math.PI * .5;
                 //wallMesh.rotation.y = Math.PI * -1;
                 wallMesh.rotation.z = Math.PI * -0.5;
-                scene.add(wallMesh);
+                    scene.add(wallMesh);
 
                 const bottomWallMat = new THREE.MeshPhongMaterial({ 
                     map: topWallText,
-                    side: THREE.DoubleSide,
+                    //side: THREE.BackSide,
                 })
 
                 wallMesh = new THREE.Mesh(topWall, bottomWallMat);
-                wallMesh.position.set(1.5, 0, 10);
+                wallMesh.position.set(0, 0, 0);
                 wallMesh.rotation.x = Math.PI * -.5;
                 scene.add(wallMesh);
             } 
@@ -150,14 +154,14 @@ function main() {
             //  mirror
 
             {
-                geometry = new THREE.CircleGeometry( 15, 20 );
+                geometry = new THREE.CircleGeometry( 12, 100 );
                 groundMirror = new Reflector( geometry, {
-                    clipBias: 0.003,
+                    clipBias: 0.0001,
                     textureWidth: window.innerWidth * window.devicePixelRatio,
                     textureHeight: window.innerHeight * window.devicePixelRatio,
                     color: 0xffFFFF
                 } );
-                groundMirror.position.y = 0.08;
+                groundMirror.position.y = 0.008;
                 groundMirror.rotateX( - Math.PI / 2 );
                 scene.add( groundMirror );
             }
@@ -297,6 +301,7 @@ function main() {
                 ColorGUIHelper 
                 const skyColor = 0xffffff;  
                 const groundColor = 0xffffff; 
+                
                 const intensity = 0.4; 
                 const light = new THREE.HemisphereLight(skyColor, groundColor, intensity); 
                 scene.add(light); 
@@ -311,7 +316,9 @@ function main() {
                 const directionalHelper = new THREE.DirectionalLightHelper(lightDir); 
                 scene.add(directionalHelper);
 
-
+                const fogColor = 0xA3A3A9;
+                const fogDensity = 0.01;
+                scene.fog = new THREE.FogExp2(fogColor, fogDensity);
 
                 function updateLight() { 
                     lightDir.target.updateMatrixWorld(); 
@@ -324,7 +331,8 @@ function main() {
                 //gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color'); para ambientlight 
                 gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('skyColor'); 
                 gui.addColor(new ColorGUIHelper(light, 'groundColor'), 'value').name('groundColor'); 
-                gui.add(lightDir, 'intensity', 0, 2, 0.01); 
+                gui.add(lightDir, 'Intensity', 0, 2, 0.01);
+                gui.add(fogDensity,'Fog density', 0.001, 1);
                 //gui.add(lightDir.target.position, 'x', -50, 50); 
                 //gui.add(lightDir.target.position,'z', -50, 50); 
                 //gui.add(lightDir.target.position, 'y', -50, 100); 
