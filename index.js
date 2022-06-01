@@ -6,29 +6,37 @@ import { Reflector } from './src/lib/Reflector.js';
 import { GUI } from './src/lib/lil-gui.module.min.js';
 import { Scene } from 'three';
 
+const canvas = document.querySelector('#c'); 
+const renderer = new THREE.WebGLRenderer({ canvas: canvas }); 
+
+const properties = {
+    fov: 70,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    near: 0.1, 
+    far: 400 
+}
+const camera = new THREE.PerspectiveCamera(
+    properties.fov, properties.width/properties.height, properties.near, properties.far); 
+const scene = new THREE.Scene(); 
+
+const controls = new OrbitControls(camera, canvas);
+
 
 
 function main() {
-    const canvas = document.querySelector('#c'); 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas }); 
 
-    const fov = 70; 
-    const aspect = window.innerWidth / window.innerHeight;// 2; // the canvas default
-    const near = 0.1; 
-    const far = 400; 
-    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far); 
+    renderer.setSize(properties.width, properties.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.shadowMap.enabled = true
+
     camera.position.set(0, 4, 25); 
     
-    
-    // controles para la camara y DOM para obtener eventos de entrada 
-    const controls = new OrbitControls(camera, canvas);
-
     // config para que orbite 5 uds por encima del origen, update para que usen el nuevo objtivo 
     controls.target.set(0, 5, 0); 
     controls.update(); 
     
     
-    const scene = new THREE.Scene(); 
     scene.background = new THREE.Color('black'); 
     
     {
