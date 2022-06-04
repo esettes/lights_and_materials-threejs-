@@ -6,46 +6,38 @@ import { Reflector } from './src/lib/Reflector.js';
 import { GUI } from './src/lib/lil-gui.module.min.js';
 import { Scene } from 'three';
 
-const canvas = document.querySelector('#c'); 
-const renderer = new THREE.WebGLRenderer({ canvas: canvas }); 
-
-const properties = {
-    fov: 70,
-    width: window.innerWidth,
-    height: window.innerHeight,
-    near: 0.1, 
-    far: 400 
-}
-const camera = new THREE.PerspectiveCamera(
-    properties.fov, properties.width/properties.height, properties.near, properties.far); 
-const scene = new THREE.Scene(); 
-
-const controls = new OrbitControls(camera, canvas);
-
 
 
 function main() {
+    const canvas = document.querySelector('#c'); 
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas }); 
 
-    renderer.setSize(properties.width, properties.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.shadowMap.enabled = true
-
+    const fov = 70; 
+    const aspect = window.innerWidth / window.innerHeight;// 2; // the canvas default
+    const near = 0.1; 
+    const far = 400; 
+    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far); 
     camera.position.set(0, 4, 25); 
-    
+
+
+    // controles para la camara y DOM para obtener eventos de entrada 
+    const controls = new OrbitControls(camera, canvas);
+
     // config para que orbite 5 uds por encima del origen, update para que usen el nuevo objtivo 
     controls.target.set(0, 5, 0); 
     controls.update(); 
-    
-    
+
+
+    const scene = new THREE.Scene(); 
     scene.background = new THREE.Color('black'); 
-    
+
     {
-        
+
     }
 
     let loader = new THREE.TextureLoader();
     let geometry, groundMirror;
-    
+
     { 
         /*const planeSize = 400; 
         const texture = loader.load('src/img/checker.png'); 
@@ -182,14 +174,14 @@ function main() {
             shininess: 100,
             //emissive: 0xc2ddc2,
             combine: THREE.AddOperation,
-            
+
         })
         //sphereMat.blending = THREE.AdditiveBlending;
         const mesh = new THREE.Mesh( sphereGeo, sphereMat ); 
         mesh.position.set(-sphereRadius - 1, sphereRadius, 0); 
         scene.add( mesh );
     } 
-        
+
     //
 
     {
@@ -242,10 +234,10 @@ function main() {
         mesh.position.set(radius + 7, radius + 2, 9); 
         scene.add(mesh);
     } 
-    
-    
+
+
     /*** ***            Agregar luces           *** ***/ 
-        
+
         class ColorGUIHelper {
             constructor(object, prop) {
                 this.object = object; 
@@ -266,7 +258,7 @@ function main() {
         folder.add(vector3, 'z', -50, 50).onChange(onChangeFn); 
         folder.open(); 
     } 
-        
+
     //
 
     { 
@@ -280,12 +272,12 @@ function main() {
         ColorGUIHelper 
         const skyColor = 0xffffff;  
         const groundColor = 0xffffff; 
-        
+
         const intensity = 0.4; 
         const light = new THREE.HemisphereLight(skyColor, groundColor, intensity); 
         scene.add(light); 
         // DirectionalLight 
-        
+
         const color = 0xFFFFFF; 
         const intensityDir = 0.5; 
         const lightDir = new THREE.DirectionalLight(color, intensityDir); 
@@ -315,12 +307,12 @@ function main() {
         //gui.add(lightDir.target.position, 'x', -50, 50); 
         //gui.add(lightDir.target.position,'z', -50, 50); 
         //gui.add(lightDir.target.position, 'y', -50, 100); 
-        
-        
+
+
         makeXYZGUI(gui, lightDir.position, 'position', updateLight); 
         makeXYZGUI(gui, lightDir.target.position, 'target', updateLight); 
     } 
-    
+
 
     //
 
@@ -336,7 +328,7 @@ function main() {
             } 
             return needResize;
         } 
-        
+
         function render() {
             if (resizeRendererToDisplaySize(renderer)) { 
                 const canvas = renderer.domElement; 
